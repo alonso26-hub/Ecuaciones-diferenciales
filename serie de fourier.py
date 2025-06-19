@@ -6,13 +6,13 @@ from sympy import symbols, integrate, cos, sin, pi, lambdify
 
 x = symbols('x')
 
-def calcular_fourier(fx,L,N):
-    a0 = (1/L) * integrate(fx, (x,-L,L))
+def calcular_fourier(fx,p,N):
+    a0 = (1/p) * integrate(fx, (x,-p,p))
     an = []
     bn = []
     for n in range(1,N+1):
-        an_i = (1/L) * integrate(fx*cos(n*pi*x/L), (x,-L,L))
-        bn_i = (1/L) * integrate(fx*sin(n*pi*x/L), (x,-L,L))
+        an_i = (1/p) * integrate(fx*cos(n*pi*x/p), (x,-p,p))
+        bn_i = (1/p) * integrate(fx*sin(n*pi*x/p), (x,-p,p))
         an.append(an_i)
         bn.append(bn_i)
     return a0, an, bn
@@ -22,14 +22,14 @@ def mostrar_resultados(a0, an, bn, N):
     for n in range(1, N + 1):
         print(f"a{n} = {sp.simplify(an[n-1])} | b{n} = {sp.simplify(bn[n-1])}")
 
-def graficar_fourier(fx, a0, an, bn, L, N, num_puntos=1000):
-    puntos=np.linspace(-L,L,num_puntos)
+def graficar_fourier(fx, a0, an, bn, p, N, num_puntos=1000):
+    puntos=np.linspace(-p,p,num_puntos)
     f_numeric=lambdify(x,fx,'numpy')
     f_real=f_numeric(puntos)
 
     suma = a0/2
     for n in range(1,N+1):
-       suma += an[n-1] * cos(n*pi*x/L) + bn[n-1] *sin(n*pi*x/L)
+       suma += an[n-1] * cos(n*pi*x/p) + bn[n-1] *sin(n*pi*x/p)
     f_aprox_func = lambdify(x, suma, 'numpy')
     f_aprox = f_aprox_func(puntos)
 
@@ -60,22 +60,22 @@ def main():
 
         if opcion == '1':
             fx = ingresar_funcion()
-            entrada = input("Ingrese el valor de L (intervalo [-L, L]): ")
-            L = float(sp.N(sp.sympify(entrada)))
+            entrada = input("Ingrese el valor de L (intervalo [-p,p]): ")
+            p = float(sp.N(sp.sympify(entrada)))
             N = int(input("Ingrese el número de términos N que desea calcular: "))
-            print(f"\nCalculando Serie de Fourier para f(x) = {fx} en [-{L}, {L}] con {N} términos...")
-            a0,an,bn=calcular_fourier(fx,L,N)
+            print(f"\nCalculando Serie de Fourier para f(x) = {fx} en [-{p}, {p}] con {N} términos...")
+            a0,an,bn=calcular_fourier(fx,p,N)
             mostrar_resultados(a0,an,bn,N)
-            graficar_fourier(fx,a0,an,bn,L,N)
+            graficar_fourier(fx,a0,an,bn,p,N)
 
         elif opcion == '2':
             fx = x
-            L = np.pi
+            p = np.pi
             N = 5
-            print(f"\nEjemplo precargado: f(x) = x en [-{L}, {L}] con {N} términos...")
-            a0,an,bn = calcular_fourier(fx,L,N)
+            print(f"\nEjemplo precargado: f(x) = x en [-{p},{p}] con {N} términos...")
+            a0,an,bn = calcular_fourier(fx,p,N)
             mostrar_resultados(a0,an,bn,N)
-            graficar_fourier(fx,a0,an,bn,L,N)
+            graficar_fourier(fx,a0,an,bn,p,N)
 
 # aqui puedes cambiar el mensaje de despedida como "adiós otaku"
         elif opcion == '3':
